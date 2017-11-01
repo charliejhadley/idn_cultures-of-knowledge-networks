@@ -22,27 +22,10 @@ people_with_connections <- reactive({
       )
     )
   
-  people.with.connections <-
-    subset(people.df, iperson_id %in% people.with.connections)
+  people.with.connections <- people.df %>%
+    filter(iperson_id %in% people.with.connections)
   
-  # ## IF timeline enabled, filter out individuals who are do not appear in life events with DateOne.Year values
-  # if (!is.null(input$visNetwork_selected_individual_show_timeslider)) {
-  #   events.with.dates <-
-  #     multiparty.interactions[!is.na(multiparty.interactions$DateOne.Year), ]
-  #   people.with.dates <-
-  #     unique(
-  #       c(
-  #         events.with.dates$Primary.Participant.Emlo_ID,
-  #         events.with.dates$Secondary.Participant.Emlo_ID
-  #       )
-  #     )
-  #   
-  #   people.with.connections <-
-  #     subset(people.with.connections,
-  #            iperson_id %in% people.with.dates)
-  #   
-  # }
-  
+
   labels.list <- as.character(people.with.connections$Person.Name)
   values.list <-
     as.list(unlist(as.character(people.with.connections$iperson_id)))
@@ -163,11 +146,11 @@ all_event_categories <-
 ## Function for filtering interactions by date
 filter_interactions <- reactive({
   if (is.null(input$visNetwork_selected_individual_show_timeslider)) {
-    return()
+    data.frame()
   }
   
   if (is.null(input$select_individuals)) {
-    return()
+    data.frame()
   }
   
   selected.interactions <- multiparty.interactions
@@ -177,10 +160,15 @@ filter_interactions <- reactive({
   #   selected.interactions[selected.interactions$Event.or.Relationship.Type != input$visNetwork_wholeNetwork_ExcludedCategory, ]
   
   if (is.null(input$visNetwork_selected_individual_show_timeslider)) {
+    data.frame()
   }
   
 
   if (input$visNetwork_selected_individual_show_timeslider == TRUE) {
+    
+    if(is.null(input$visNetwork_selected_individual_time_period_of_interest)){
+      return()
+    }
     
     slider_date_list <-
       input$visNetwork_selected_individual_time_period_of_interest
@@ -284,6 +272,10 @@ network.edges.function <- function(selected.interactions) {
 connections_to_selected_individual <- reactive({
   ## Set selected.interactions as all multiparty.interactions
   selected.interactions <- filter_interactions()
+  
+  if(nrow(selected.interactions) == 0){
+    data.frame()
+  }
   
   # Drop levels that are empty (as a result of above subsetting)
   selected.interactions <- droplevels(selected.interactions)
