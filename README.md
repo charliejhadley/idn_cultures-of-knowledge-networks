@@ -10,6 +10,8 @@
 
 Should you have questions about the project or wish to find out more about this dataset, please contact Arno Bosse (http://www.culturesofknowledge.org/?page_id=5).
 
+This code is deposited here: [doi.org/10.6084/m9.figshare.5558605](http://doi.org/10.6084/m9.figshare.5558605).
+
 # Attribution
 
 Code is made available subject to a MIT license, the following copyright and attribution should be respected when reusing the code
